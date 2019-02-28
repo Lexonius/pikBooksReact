@@ -23,8 +23,9 @@
   color: #61dafb;
 }
 
-.header{
-  display: flex,
+.top-table {
+  display: flex;
+  align-items: center;
 }
 
 .wrapper{
@@ -41,8 +42,31 @@
   display: flex;
 }
 
+.top{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 5px 10px 5px;
+  
+}
+
 .avatar{
   height: 178px;
+  width: 135px;
+  margin-bottom: 32px;
+}
+
+.searchInput{
+  width: 93%;
+}
+
+.buttonBlock{
+  padding: 5px 0px 10px 0px;
+}
+
+.input {
+  padding: 5px 0px 5px 10px;
+  width: 95%;
 }
 @keyframes App-logo-spin {
   from {

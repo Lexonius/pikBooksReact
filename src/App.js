@@ -27,6 +27,9 @@ class App extends Component {
         name: undefined,
         pages: undefined,
         year: undefined
+      },
+      modalData:{
+        displayModalWindow: 'none'
       }
     };
   }
@@ -57,7 +60,7 @@ class App extends Component {
       <div className="App" >
        
           <div className='tableWrap'>
-            <div className="header">
+            <div className="top-table">
               <Button> Add Book </Button>
               <Input placeholder="Basic usage" onChange = {this.searchBooks} className="searchInput"/>        
             </div>
@@ -75,12 +78,13 @@ class App extends Component {
                       console.log(this.props);
                       this.setState({chooseBook: record});
                       console.log(this.state.chooseBook.id);
+                      this.setState({modalData:'block'})
                     },       
                   };
                 }}
               
               columns={columns} dataSource={this.state.data} size="small" />
-              <ModalWindow chooseBook={this.state.chooseBook}/> 
+              <ModalWindow chooseBook={this.state.chooseBook} style={this.state.modalData}/> 
             </div>
         </div>
       </div>
