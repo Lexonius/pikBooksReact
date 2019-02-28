@@ -23,6 +23,27 @@
   color: #61dafb;
 }
 
+.header{
+  display: flex,
+}
+
+.wrapper{
+  position: fixed;
+  top: 9%;
+  left: 32%;
+  border: 0.5px solid #ebeef5;
+  background-color: #ffffff;
+  border-radius: 5px;
+  z-index: 1;
+}
+
+.body{
+  display: flex;
+}
+
+.avatar{
+  height: 178px;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -30,4 +51,6 @@
   to {
     transform: rotate(360deg);
   }
+
+
 }
