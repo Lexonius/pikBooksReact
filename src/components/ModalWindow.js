@@ -14,7 +14,7 @@ class ModalWindow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: "",
+      id: this.props,
       author: "",
       country: "",
       language: "",
@@ -25,79 +25,42 @@ class ModalWindow extends Component {
       link: "",
       key: "",
       displayModalWindow: "none",
-      defaultBookCover:
-        "http://volkhonkamansion.ru/wp-content/uploads/2016/05/ikonka-knig.jpg",
+
       disableFields: true
     };
   }
 
-  componentWillUpdate(prevProps, prevState) {
-    console.log(prevProps);
-    console.log(prevState);
-    console.log(this.state);
-    this.state.avatar = prevProps.chooseBook.avatar;
-    this.state.id = prevProps.chooseBook.id;
-    this.state.name = prevProps.chooseBook.name;
-    this.state.author = prevProps.chooseBook.author;
-    this.state.country = prevProps.chooseBook.country;
-    this.state.language = prevProps.chooseBook.language;
-    this.state.pages = prevProps.chooseBook.pages;
-    this.state.year = prevProps.chooseBook.year;
-    this.state.link = prevProps.chooseBook.link;
-    this.state.key = prevProps.chooseBook.key;
-    this.state.displayModalWindow = prevProps.style;
-    if (prevProps.chooseBook.avatar === "") {
-      this.state.avatar = false;
-    }
-  }
-
   getThisBook = e => {
-    window.location = this.state.link;
+    window.location = this.props.data.link;
   };
 
   deleteBook = async () => {
     let deletedReq = await axios.post(requestAddressValid, {
-      id: this.state.id,
+      id:this.props.data.id,
+      booksId: this.props.data.id,
       isDelete: true
     });
     console.log(deletedReq);
   };
 
   closeModalWindow = e => {
-    console.log(this.display);
-    this.setState({ disableFields: true });
-    this.setState({ displayModalWindow: "none" });
+  this.props.closeModalWindow()
   };
 
   changeBookFieldNum = e => {
-    this.setState({ [e.target.name]: e.target.value });
+    this.props.updateData(e.target.name, e.target.value)
   };
 
   changeBookField = e => {
-    this.setState({ [e.target.name]: e.target.value });
+    this.props.updateData(e.target.name, e.target.value)
   };
 
   changeFields = e => {
-    console.log("45");
-    this.setState({ disableFields: false });
+    this.props.changeFields()
   };
 
-  saveObj = async () => {
-    console.log(this.state);
-    let updateReq = await axios.post(requestAddressValid, {
-      author: this.state.author,
-      country: this.state.country,
-      id: this.state.id,
-      language: this.state.language,
-      name: this.state.name,
-      pages: this.state.pages,
-      year: this.state.year,
-      bookAvatar: this.state.avatar,
-      link: this.state.link,
-      isDelete: false,
-      isComplete: ""
-    });
-    console.log(updateReq);
+  saveObj = () => {
+    this.props.saveObj()
   };
 
   render() {
@@ -106,11 +69,11 @@ class ModalWindow extends Component {
     return (
       <div
         className="wrapper"
-        style={{ display: this.state.displayModalWindow }}
+        style={{ display: this.props.modalData }}
       >
         <div className="top">
-          <div className="headerText">
-            "{this.props.chooseBook.name}" {this.props.chooseBook.author}
+          <div className="headerText" style={{ display: this.props.modalWindowHeader }}>
+            "{this.props.data.name}" {this.props.data.author} 
           </div>
           <Icon type="close" onClick={this.closeModalWindow} />
         </div>
@@ -118,74 +81,80 @@ class ModalWindow extends Component {
           <div className="left">
             <form className="inputsBlock">
               <div className="input">
+              <div className="inputHeader">Id*</div>
                 <Input
                   name="id"
-                  placeholder={this.props.chooseBook.id}
-                  onChange={this.changeBookFieldNum}
-                  value={this.state.id}
+                  placeholder={this.props.data.id}
+                  onChange={this.changeBookField}
+                  value={this.props.data.id}
                   className="searchInput"
-                  disabled={this.state.disableFields}
+                  disabled={this.props.fields}
                 />
               </div>
               <div className="input">
+              <div className="inputHeader">name*</div>
                 <Input
                   name="name"
-                  placeholder={this.props.chooseBook.name}
-                  type="text"
-                  onChange={this.changeBookField.bind(this, "chooseBook")}
-                  value={this.state.name}
+                  placeholder={this.props.data.name}
+                  onChange={this.changeBookField}
+                  value={this.props.data.name}
                   className="searchInput"
-                  disabled={this.state.disableFields}
+                  disabled={this.props.fields}
                 />
               </div>
               <div className="input" disabled={true}>
+                <div className="inputHeader">author*</div>
                 <Input
                   name="author"
-                  placeholder={this.props.chooseBook.author}
+                  placeholder={this.props.data.author}
                   onChange={this.changeBookField}
-                  value={this.state.author}
+                  value={this.props.data.author}
                   className="searchInput"
-                  disabled={this.state.disableFields}
+                  disabled={this.props.fields}
                 />
               </div>
               <div className="input">
+              <div className="inputHeader">year</div>
                 <Input
                   name="year"
-                  placeholder={this.props.chooseBook.year}
-                  onChange={this.changeBookFieldNum}
-                  value={this.state.year}
+                  placeholder={this.props.data.year}
+                  onChange={this.changeBookField}
+                  value={this.props.data.year}
                   className="searchInput"
-                  disabled={this.state.disableFields}
+                  disabled={this.props.fields}
                 />
               </div>
               <div className="input">
+              <div className="inputHeader">country</div>
                 <Input
                   name="country"
-                  placeholder={this.props.chooseBook.country}
+                  placeholder={this.props.data.country}
                   onChange={this.changeBookField}
-                  value={this.state.country}
+                  value={this.props.data.country}
                   className="searchInput"
-                  disabled={this.state.disableFields}
+                  disabled={this.props.fields}
                 />
               </div>
               <div className="input">
+              <div className="inputHeader">language</div>
                 <Input
                   name="language"
-                  placeholder={this.props.chooseBook.language}
+                  placeholder={this.props.data.language}
                   onChange={this.changeBookField}
-                  value={this.state.language}
+                  value={this.props.data.language}
                   className="searchInput"
-                  disabled={this.state.disableFields}
+                  disabled={this.props.fields}
                 />
               </div>
               <div className="input">
+              <div className="inputHeader">pages</div>
                 <Input
                   name="pages"
-                  placeholder={this.props.chooseBook.pages}
-                  onChange={this.changeBookFieldNum}
-                  value={this.state.pages}
+                  placeholder={this.props.data.pages}
+                  onChange={this.changeBookField}
+                  value={this.props.data.pages}
                   className="searchInput"
-                  disabled={this.state.disableFields}
+                  disabled={this.props.fields}
                 />
               </div>
             </form>
@@ -194,29 +163,31 @@ class ModalWindow extends Component {
             <img
               className="avatar"
               src={
-                this.state.avatar === false
-                  ? this.state.defaultBookCover
-                  : this.state.avatar
+                this.props.data.avatar === ""
+                  ? this.props.data.defaultBookCover
+                  : this.props.data.avatar
               }
               name="avatar"
             />
             <div className="input">
+            <div className="inputHeader">avatar</div>
               <Input
                 name="avatar"
-                placeholder={this.props.chooseBook.avatar}
+                placeholder={this.props.data.avatar}
                 onChange={this.changeBookField}
                 className="searchInput"
-                disabled={this.state.disableFields}
+                disabled={this.props.fields}
               />
             </div>
             <div className="input">
+            <div className="inputHeader">link</div>
               <Input
                 name="link"
-                placeholder={this.props.chooseBook.link}
+                placeholder={this.props.data.link}
                 onChange={this.changeBookField}
-                value={this.state.link}
+                value={this.props.data.link}
                 className="searchInput"
-                disabled={this.state.disableFields}
+                disabled={this.props.fields}
               />
             </div>
           </div>
@@ -227,7 +198,6 @@ class ModalWindow extends Component {
           </Button>
           <Button onClick={this.changeFields}>Change</Button>
           <Button onClick={this.saveObj}>Save</Button>
-
           <Button type="danger" onClick={this.deleteBook}>
             Delete
           </Button>

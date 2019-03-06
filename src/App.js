@@ -6,7 +6,7 @@ import { Button } from "antd";
 import { Table } from "antd";
 import ModalWindow from "./components/ModalWindow";
 import AuthWindow from "./components/AuthWindow";
-// import { requestAddressValid } from "./config";
+import { requestAddressValid } from "./config";
 import { requestAddress } from "./config";
 // import { requestAddressValidText } from "./config";
 // import { getUserAddress } from "./config";
@@ -16,20 +16,28 @@ class App extends Component {
     super(props);
     this.state = {
       data: [],
-      chooseBook: {
-        author: undefined,
-        avatar: undefined,
-        country: undefined,
-        id: undefined,
-        key: undefined,
-        language: undefined,
-        link: undefined,
-        name: undefined,
-        pages: undefined,
-        year: undefined
-      },
-      modalData: "none"
+      author: undefined,
+      avatar: undefined,
+      country: undefined,
+      id: undefined,
+      key: undefined,
+      language: undefined,
+      link: undefined,
+      name: undefined,
+      pages: undefined,
+      year: undefined,
+      modalData: "none",
+      defaultBookCover:
+        "http://volkhonkamansion.ru/wp-content/uploads/2016/05/ikonka-knig.jpg",
+      modalWindowHeader: "",
+      disabledFields: false,
+      tableRender: 'none',
+      role:"",
     };
+  }
+
+  updateData = (name, value) => {
+    this.setState({[name]: value})
   }
 
   async getFilterBooks(filterValue) {
@@ -77,7 +85,6 @@ class App extends Component {
   }
 
   searchBooks = event => {
-    // event.persist()
     this.setState({ modalData: "none" });
     if (this.state.filterInputValue === "") {
       this.getAllBooks(event.target.value);
@@ -117,16 +124,57 @@ class App extends Component {
       booksArr.push(booksField);
     });
     this.setState({ data: booksArr });
-    console.log("all", this.state.data);
   }
 
   componentWillMount() {
     this.getAllBooks();
   }
 
+  changeFields = e => {
+    console.log("45");
+    this.setState({ disabledFields: false });
+  };
+
+  auth(){
+    this.setState({tableRender: 'flex'})
+  }
+
+  saveObj = async () => {
+    console.log(this.state);
+    let updateReq = await axios.post(requestAddressValid, {
+      author: this.state.author,
+      country: this.state.country,
+      id: this.state.id,
+      language: this.state.language,
+      name: this.state.name,
+      pages: this.state.pages,
+      year: this.state.year,
+      bookAvatar: this.state.avatar,
+      link: this.state.link,
+      isDelete: false,
+      isComplete: ""
+    });
+    this.getAllBooks()
+  };
+
   onAddBook = e => {
-    this.setState({ chooseBook: {} });
     this.setState({ modalData: "inline" });
+    this.setState({name: "" });
+    this.setState({id: "" });
+    this.setState({author: "" });
+    this.setState({country: "" });
+    this.setState({link: "" });
+    this.setState({pages: "" });
+    this.setState({year: "" });
+    this.setState({language: "" });
+    this.setState({avatar: "" });
+    this.setState({modalWindowHeader: 'none'})
+    this.setState({disabledFields: false})
+  };
+
+  closeModalWindow = e => {
+    this.setState({ disableFields: true });
+    this.setState({ modalData: "none" });
   };
 
   render() {
@@ -152,8 +200,10 @@ class App extends Component {
     console.log(this.props);
 
     return (
-      <div className="App">
-        <div className="tableWrap">
+      <div className="App" >>
+        <div className="tableWrap" 
+        // style={{ display: this.state.tableRender }}
+        >
           <div className="top-table">
             <Button onClick={this.onAddBook}> Add Book </Button>
             <Input
@@ -167,16 +217,19 @@ class App extends Component {
               onRow={(record, rowIndex) => {
                 return {
                   onClick: event => {
-                    // event.persist()
-                    // event.preventDefault()
                     console.log(record);
-                    // this.setState({chooseBook: record})
-                    // console.log(this.state);
-                    // this.props = record
-                    console.log(this.props);
-                    this.setState({ chooseBook: record });
-                    console.log(this.state.chooseBook.id);
+                    this.setState({name: record.name });
+                    this.setState({id: record.id });
+                    this.setState({author: record.author });
+                    this.setState({country: record.country });
+                    this.setState({link: record.link });
+                    this.setState({pages: record.pages });
+                    this.setState({year: record.year });
+                    this.setState({language: record.language });
+                    this.setState({avatar: record.avatar });
                     this.setState({ modalData: "block" });
+                    this.setState({modalWindowHeader: "inline"})
+                    this.setState({disabledFields: true})
                   }
                 };
               }}
@@ -185,12 +238,22 @@ class App extends Component {
               size="small"
             />
             <ModalWindow
-              chooseBook={this.state.chooseBook}
-              style={this.state.modalData}
+              data={this.state}
+              updateData = {this.updateData}
+              modalData={this.state.modalData}
+              defaultBookCover={this.state.defaultBookCover}
+              closeModalWindow={this.closeModalWindow}
+              modalWindowHeader={this.state.modalWindowHeader}
+              saveObj={this.saveObj}
               fields={this.state.disabledFields}
+              changeFields={this.changeFields}
             />
+            
           </div>
         </div>
+        {/* <AuthWindow 
+        table={this.auth}
+        /> */}
       </div>
     );
   }
