@@ -13,21 +13,6 @@ import { requestAddressValid } from "../config";
 class ModalWindow extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      id: this.props,
-      author: "",
-      country: "",
-      language: "",
-      name: "",
-      pages: "",
-      year: "",
-      avatar: "",
-      link: "",
-      key: "",
-      displayModalWindow: "none",
-
-      disableFields: true
-    };
   }
 
   getThisBook = e => {
@@ -163,7 +148,7 @@ class ModalWindow extends Component {
             <img
               className="avatar"
               src={
-                this.props.data.avatar === ""
+                this.props.data.avatar === undefined
                   ? this.props.data.defaultBookCover
                   : this.props.data.avatar
               }

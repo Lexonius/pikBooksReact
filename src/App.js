@@ -33,12 +33,15 @@ class App extends Component {
       disabledFields: false,
       tableRender: 'none',
       role:"",
+      authWindowRender:"",
     };
   }
 
   updateData = (name, value) => {
     this.setState({[name]: value})
   }
+
+
 
   async getFilterBooks(filterValue) {
     let searchRequest = await axios.post(requestAddress, {
@@ -93,6 +96,36 @@ class App extends Component {
     }
   };
 
+  async getBooksSl(){
+    const request = await axios.get('https://directual.com/good/api/v5/data/books/getBooks?appID=d35b5f25-1215-411d-8775-d49cec6b4a3f&sessionID=?&pageSize=120&page=0',{
+      "pageSize": 110,
+      "page": 1,
+      "allObjects": true,
+      "orders": []
+    })
+    console.log(request);
+    
+    let booksArr = [];
+    request.data.payload.forEach(element => {
+      console.log(element);
+      
+      let booksField = {
+        id: element.id,
+        author: element.author,
+        country: element.country,
+        language: element.language,
+        name: element.name,
+        pages: element.pages,
+        year: element.year,
+        avatar: element.pic,
+        link: element.link,
+        key: element.id
+      };
+      booksArr.push(booksField);
+    });
+    this.setState({ data: booksArr });
+  }
+
   async getAllBooks() {
     const request = await axios.post(requestAddress, {
       filters: [
@@ -126,8 +159,9 @@ class App extends Component {
     this.setState({ data: booksArr });
   }
 
-  componentWillMount() {
-    this.getAllBooks();
+  componentDidMount() {
+    // this.getAllBooks();
+    this.getBooksSl()
   }
 
   changeFields = e => {
@@ -135,8 +169,13 @@ class App extends Component {
     this.setState({ disabledFields: false });
   };
 
-  auth(){
-    this.setState({tableRender: 'flex'})
+  auth=()=>{
+    this.setState({tableRender: 'block'})
+    this.setState({})
+  }
+
+  authWindowRender = () => {
+    this.setState({authWindowRender:'none'})
   }
 
   saveObj = async () => {
@@ -200,9 +239,9 @@ class App extends Component {
     console.log(this.props);
 
     return (
-      <div className="App" >>
+      <div className="App" >
         <div className="tableWrap" 
-        // style={{ display: this.state.tableRender }}
+        style={{ display: this.state.tableRender }}
         >
           <div className="top-table">
             <Button onClick={this.onAddBook}> Add Book </Button>
@@ -251,9 +290,11 @@ class App extends Component {
             
           </div>
         </div>
-        {/* <AuthWindow 
+        <AuthWindow 
         table={this.auth}
-        /> */}
+        renderAuthwindow={this.authWindowRender}
+        authWindowRender={this.state.authWindowRender}
+        />
       </div>
     );
   }
